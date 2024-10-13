@@ -1,3 +1,4 @@
+using Hotels.Configuration;
 using Hotels.Infrastructure.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,16 +29,16 @@ namespace Hotels
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext<HotelsDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("HotelsDb"),
                     opt => opt.UseNetTopologySuite()));
-
             services.AddControllers();
+            services.ResolveDependencies();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotels", Version = "v1" });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
