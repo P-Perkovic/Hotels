@@ -1,3 +1,4 @@
+using FluentValidation;
 using Hotels.Configuration;
 using Hotels.Infrastructure.Context;
 using Microsoft.AspNetCore.Builder;
@@ -32,6 +33,8 @@ namespace Hotels
             services.AddDbContext<HotelsDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("HotelsDb"),
                     opt => opt.UseNetTopologySuite()));
+            services.AddAutoMapper(typeof(Startup));
+            services.AddValidatorsFromAssemblyContaining<HotelCommandValidator>();
             services.AddControllers();
             services.ResolveDependencies();
             services.AddSwaggerGen(c =>

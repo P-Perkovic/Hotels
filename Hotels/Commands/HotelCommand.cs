@@ -8,8 +8,8 @@ namespace Hotels.Commands
 {
     public record HotelCommand
     {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public decimal Price { get; set; } = 0m;
         public double Longitude { get; set; }
         public double Latitude { get; set; }
     }

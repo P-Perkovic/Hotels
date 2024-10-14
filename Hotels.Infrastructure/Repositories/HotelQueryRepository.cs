@@ -16,18 +16,19 @@ namespace Hotels.Infrastructure.Repositories
 {
     public class HotelQueryRepository : QueryRepository<Hotel>, IHotelQueryRepository
     {
-        public HotelQueryRepository(HotelsDbContext db, ILogger logger) : base(db, logger) { }
+        public HotelQueryRepository(HotelsDbContext db) : base(db) { }
 
 
 
         public async Task<IEnumerable<Hotel>> SearchByLocation(Point point, LocationQuery locationQuery)
         {
-            return await DbSet.AsNoTracking()
-                .Where(h => h.Location.Distance(point) > locationQuery.Distance)
+            var query = DbSet.AsNoTracking()
+                .Where(h => h.Location.Distance(point) < locationQuery.Distance)
                 .OrderBy(h => h.Location.Distance(point))
                 .ThenBy(h => h.Price)
-                .Page(locationQuery)
-                .ToListAsync();
+                .Page(locationQuery);
+
+            return await query.ToListAsync();
         }
     }
 }

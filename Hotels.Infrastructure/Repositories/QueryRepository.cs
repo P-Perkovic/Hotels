@@ -18,26 +18,16 @@ namespace Hotels.Infrastructure.Repositories
     {
         protected readonly HotelsDbContext Db;
         protected readonly DbSet<TEntity> DbSet;
-        protected readonly ILogger _logger;
 
-        protected QueryRepository(HotelsDbContext db, ILogger logger)
+        protected QueryRepository(HotelsDbContext db)
         {
             Db = db;
             DbSet = db.Set<TEntity>();
-            _logger = logger;
         }
 
         public virtual async Task<TEntity> GetById(int id)
         {
-            try
-            {
-                return await DbSet.FindAsync(id);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Error getting {nameof(DbSet)} with id {id}");
-                return null;
-            }
+            return await DbSet.FindAsync(id);
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAll(PageQuery pageQuery)

@@ -21,6 +21,14 @@ namespace Hotels.Infrastructure.Context
                 .Property(h => h.Name)
                 .IsRequired()
                 .HasMaxLength(255);
+
+            modelBuilder.Entity<Hotel>()
+                .Property(h => h.Price)
+                .IsRequired();
+
+            modelBuilder.Entity<Hotel>()
+                .Property(h => h.Location)
+                .IsRequired();
         }
     }
 }

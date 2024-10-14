@@ -3,6 +3,7 @@ using Hotels.Domain.Models;
 using Hotels.Domain.Services;
 using Hotels.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

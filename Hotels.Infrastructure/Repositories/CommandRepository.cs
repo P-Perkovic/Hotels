@@ -14,64 +14,36 @@ namespace Hotels.Infrastructure.Repositories
     {
         protected readonly HotelsDbContext Db;
         protected readonly DbSet<TEntity> DbSet;
-        protected readonly ILogger _logger;
-
-        protected CommandRepository(HotelsDbContext db, ILogger logger)
+        protected CommandRepository(HotelsDbContext db)
         {
             Db = db;
             DbSet = db.Set<TEntity>();
-            _logger = logger;
         }
 
         public virtual async Task<TEntity> Add(TEntity entity)
         {
-            try
-            {
-                DbSet.Add(entity);
-                await Db.SaveChangesAsync();
-                return entity;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Error adding entity {nameof(DbSet)}");
-                return null;
-            }
+            DbSet.Add(entity);
+            var result = await Db.SaveChangesAsync() > 0;
+            return result? entity : null;
         }
 
         public virtual async Task<TEntity> Update(TEntity entity)
         {
-            try
-            {
-                DbSet.Update(entity);
-                await Db.SaveChangesAsync();
-                return entity;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Error updating {nameof(DbSet)} with id {entity.Id}");
-                return null;
-            }
+            DbSet.Update(entity);
+            var result = await Db.SaveChangesAsync() > 0;
+            return result ? entity : null;
         }
 
         public virtual async Task<bool> Remove(int id)
         {
-            try
+            var entity = await DbSet.FindAsync(id);
+            if (entity != null)
             {
-                var entity = await DbSet.FindAsync(id);
-                if (entity != null)
-                {
-                    DbSet.Remove(entity);
-                    return await Db.SaveChangesAsync() > 0;
-                }
-                else
-                {
-                    _logger.LogWarning($"{nameof(DbSet)} with id {id} not found for deletion");
-                    return false;
-                }
+                DbSet.Remove(entity);
+                return await Db.SaveChangesAsync() > 0;
             }
-            catch (Exception e)
+            else
             {
-                _logger.LogError(e, $"Error deleting {nameof(DbSet)} with id {id}");
                 return false;
             }
         }

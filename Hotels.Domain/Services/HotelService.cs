@@ -39,25 +39,39 @@ namespace Hotels.Domain.Services
 
         public async Task<IEnumerable<Hotel>> SearchByLocation(LocationQuery locationQuery)
         {
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: SRID);
-            var point = geometryFactory.CreatePoint(new Coordinate(locationQuery.Longitude, locationQuery.Latitude));
-
+            var point = GetPointFromCoordinates(locationQuery.Longitude, locationQuery.Latitude);
             return await _queryRepository.SearchByLocation(point, locationQuery);
         }
 
-        public async Task<Hotel> Upsert(Hotel hotel)
+        public async Task<Hotel> Add(Hotel hotel, double longitude, double latitude)
         {
+            hotel.Location = GetPointFromCoordinates(longitude, latitude);
+
+            return await _commandRepository.Add(hotel);
+        }
+
+        public async Task<Hotel> Update(int id, Hotel hotel, double longitude, double latitude)
+        {
+            hotel.Id = id;
+            hotel.Location = GetPointFromCoordinates(longitude, latitude);
+
             if(hotel.Id > 0)
             {
                 return await _commandRepository.Update(hotel);
             }
 
-            return await _commandRepository.Add(hotel);
+            return null;
         }
 
         public async Task<bool> Delete(int id)
         {
             return await _commandRepository.Remove(id);
+        }
+
+        private Point GetPointFromCoordinates(double longitude, double latitude)
+        {
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: SRID);
+            return geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
         }
     }
 }

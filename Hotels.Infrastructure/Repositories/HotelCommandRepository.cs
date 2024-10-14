@@ -9,6 +9,6 @@ namespace Hotels.Infrastructure.Repositories
 {
     public class HotelCommandRepository : CommandRepository<Hotel>
     {
-        public HotelCommandRepository(HotelsDbContext db, ILogger logger) : base(db, logger) { }
+        public HotelCommandRepository(HotelsDbContext db) : base(db) { }
     }
 }
