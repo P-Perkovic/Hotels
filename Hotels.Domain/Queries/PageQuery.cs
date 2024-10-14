@@ -11,7 +11,7 @@ namespace Hotels.Domain.Queries
 
         public bool Validate()
         {
-            return PageSize < 1;
+            return PageSize > 0;
         }
     }
 }

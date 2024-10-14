@@ -93,7 +93,7 @@ namespace Hotels.Tests
             var pageQuery = new PageQuery
             {
                 Page = 1,
-                PageSize = 5
+                PageSize = 0
             };
             _hotelService.Setup(s => s.GetAll(It.IsAny<PageQuery>(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<Hotel>());
             var controller = new HotelsController(_hotelService.Object, _logger.Object, _mapper, null);
