@@ -71,6 +71,7 @@ namespace Hotels.Controllers
         //     Search hotels by distance from current location.
         //     Pagination included.
         //     Sorting by distance from current location and price (lower first.)
+        //     Distance is in meters
         //
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] LocationQuery locationQuery, CancellationToken cancellationToken)
