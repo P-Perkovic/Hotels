@@ -11,7 +11,7 @@ namespace Hotels.Domain.Extensions
     {
         public static IQueryable<TEntity> Page<TEntity>(this IQueryable<TEntity> query, PageQuery pageQuery) where TEntity : Entity
         {
-            int skip = Math.Max(pageQuery.Page * (pageQuery.Page - 1), 0);
+            int skip = Math.Max(pageQuery.PageSize * (pageQuery.Page - 1), 0);
             return query.Skip(skip).Take(pageQuery.PageSize);
         }
     }

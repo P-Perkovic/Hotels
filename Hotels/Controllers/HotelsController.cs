@@ -54,8 +54,13 @@ namespace Hotels.Controllers
         //     Get hotels with pagination.
         //
         [HttpGet]
-        public async Task<IActionResult> GetPage(int page, int pageSize)
+        public async Task<IActionResult> GetHotels(int page, int pageSize)
         {
+            if(pageSize < 1)
+            {
+                return Ok();
+            }
+
             var pageQuery = new PageQuery
             {
                 Page = page,
@@ -75,6 +80,11 @@ namespace Hotels.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] LocationQuery locationQuery)
         {
+            if (locationQuery.PageSize < 1)
+            {
+                return Ok();
+            }
+
             var hotels = await _hotelService.SearchByLocation(locationQuery);
 
             return Ok(_mapper.Map<IEnumerable<HotelDto>>(hotels));
