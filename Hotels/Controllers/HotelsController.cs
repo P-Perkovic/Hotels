@@ -54,7 +54,7 @@ namespace Hotels.Controllers
         //     Get hotels with pagination.
         //
         [HttpGet]
-        public async Task<IActionResult> GetHotels(PageQuery pageQuery, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetHotels([FromQuery] PageQuery pageQuery, CancellationToken cancellationToken)
         {
             if(!pageQuery.Validate())
             {
