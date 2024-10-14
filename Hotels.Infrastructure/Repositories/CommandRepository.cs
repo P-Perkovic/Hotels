@@ -37,7 +37,7 @@ namespace Hotels.Infrastructure.Repositories
 
         public virtual async Task<bool> Remove(int id, CancellationToken cancellationToken)
         {
-            var entity = await DbSet.FindAsync(id, cancellationToken);
+            var entity = await DbSet.FindAsync(new object[] { id }, cancellationToken);
             if (entity != null)
             {
                 DbSet.Remove(entity);

@@ -28,7 +28,7 @@ namespace Hotels.Infrastructure.Repositories
 
         public virtual async Task<TEntity> GetById(int id, CancellationToken cancellationToken)
         {
-            return await DbSet.FindAsync(id, cancellationToken);
+            return await DbSet.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public virtual async Task<IEnumerable<TEntity>> GetAll(PageQuery pageQuery, CancellationToken cancellationToken)
