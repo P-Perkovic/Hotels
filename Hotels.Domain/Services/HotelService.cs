@@ -50,17 +50,11 @@ namespace Hotels.Domain.Services
             return await _commandRepository.Add(hotel);
         }
 
-        public async Task<Hotel> Update(int id, Hotel hotel, double longitude, double latitude)
+        public async Task<Hotel> Update(Hotel hotel, double longitude, double latitude)
         {
-            hotel.Id = id;
             hotel.Location = GetPointFromCoordinates(longitude, latitude);
 
-            if(hotel.Id > 0)
-            {
-                return await _commandRepository.Update(hotel);
-            }
-
-            return null;
+            return await _commandRepository.Update(hotel);
         }
 
         public async Task<bool> Delete(int id)
@@ -68,6 +62,10 @@ namespace Hotels.Domain.Services
             return await _commandRepository.Remove(id);
         }
 
+        //
+        // Summary:
+        //     Get Point object for provided longitude and latitude.
+        //
         private Point GetPointFromCoordinates(double longitude, double latitude)
         {
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: SRID);

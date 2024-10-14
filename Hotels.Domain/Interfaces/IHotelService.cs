@@ -14,7 +14,7 @@ namespace Hotels.Domain.Interfaces
         Task<IEnumerable<Hotel>> GetAll(PageQuery pageQuery);
         Task<IEnumerable<Hotel>> SearchByLocation(LocationQuery locationQuery);
         Task<Hotel> Add(Hotel hotel, double longitude, double latitude);
-        Task<Hotel> Update(int id, Hotel hotel, double longitude, double latitude);
+        Task<Hotel> Update(Hotel hotel, double longitude, double latitude);
         Task<bool> Delete(int id);
     }
 }

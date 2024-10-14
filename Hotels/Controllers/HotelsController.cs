@@ -32,6 +32,10 @@ namespace Hotels.Controllers
             _validator = validator;
         }
 
+        //
+        // Summary:
+        //     Get hotel with provided id.
+        //
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -45,6 +49,10 @@ namespace Hotels.Controllers
             return Ok(_mapper.Map<HotelDto>(hotel));
         }
 
+        //
+        // Summary:
+        //     Get hotels with pagination.
+        //
         [HttpGet]
         public async Task<IActionResult> GetPage(int page, int pageSize)
         {
@@ -58,6 +66,12 @@ namespace Hotels.Controllers
             return Ok(_mapper.Map<IEnumerable<HotelDto>>(hotels));
         }
 
+        //
+        // Summary:
+        //     Search hotels by distance from current location.
+        //     Pagination included.
+        //     Sorting by distance from current location and price (lower first.)
+        //
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] LocationQuery locationQuery)
         {
@@ -66,6 +80,10 @@ namespace Hotels.Controllers
             return Ok(_mapper.Map<IEnumerable<HotelDto>>(hotels));
         }
 
+        //
+        // Summary:
+        //     Create hotel.
+        //
         [HttpPost]
         public async Task<IActionResult> Create(HotelCommand hotelCommand)
         {
@@ -85,6 +103,10 @@ namespace Hotels.Controllers
             return CreatedAtAction("Create", _mapper.Map<HotelDto>(hotel));
         }
 
+        //
+        // Summary:
+        //     Update hotel with provided id.
+        //
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, HotelCommand hotelCommand)
         {
@@ -101,7 +123,7 @@ namespace Hotels.Controllers
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var hotel = await _hotelService.Update(id, _mapper.Map(hotelCommand, entity), hotelCommand.Longitude, hotelCommand.Latitude);
+            var hotel = await _hotelService.Update(_mapper.Map(hotelCommand, entity), hotelCommand.Longitude, hotelCommand.Latitude);
             if(hotel is null)
             {
                 _logger.LogInformation($"Update failed for hotel with id {id}.");
@@ -111,6 +133,10 @@ namespace Hotels.Controllers
             return Ok(_mapper.Map<HotelDto>(hotel));
         }
 
+        //
+        // Summary:
+        //     Delete hotel with provided id.
+        //
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
