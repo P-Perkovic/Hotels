@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hotels.Controllers
@@ -37,13 +38,12 @@ namespace Hotels.Controllers
         //     Get hotel with provided id.
         //
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var hotel = await _hotelService.GetById(id);
+            var hotel = await _hotelService.GetById(id, cancellationToken);
             if(hotel is null)
             {
-                _logger.LogInformation($"Hotel with id {id} not found.");
-                return BadRequest();
+                return NotFound();
             }
 
             return Ok(_mapper.Map<HotelDto>(hotel));
@@ -54,19 +54,14 @@ namespace Hotels.Controllers
         //     Get hotels with pagination.
         //
         [HttpGet]
-        public async Task<IActionResult> GetHotels(int page, int pageSize)
+        public async Task<IActionResult> GetHotels(PageQuery pageQuery, CancellationToken cancellationToken)
         {
-            if(pageSize < 1)
+            if(!pageQuery.Validate())
             {
                 return Ok();
             }
 
-            var pageQuery = new PageQuery
-            {
-                Page = page,
-                PageSize = pageSize
-            };
-            var hotels = await _hotelService.GetAll(pageQuery);
+            var hotels = await _hotelService.GetAll(pageQuery, cancellationToken);
 
             return Ok(_mapper.Map<IEnumerable<HotelDto>>(hotels));
         }
@@ -78,14 +73,14 @@ namespace Hotels.Controllers
         //     Sorting by distance from current location and price (lower first.)
         //
         [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] LocationQuery locationQuery)
+        public async Task<IActionResult> Search([FromQuery] LocationQuery locationQuery, CancellationToken cancellationToken)
         {
-            if (locationQuery.PageSize < 1)
+            if (!locationQuery.Validate())
             {
                 return Ok();
             }
 
-            var hotels = await _hotelService.SearchByLocation(locationQuery);
+            var hotels = await _hotelService.SearchByLocation(locationQuery, cancellationToken);
 
             return Ok(_mapper.Map<IEnumerable<HotelDto>>(hotels));
         }
@@ -95,7 +90,7 @@ namespace Hotels.Controllers
         //     Create hotel.
         //
         [HttpPost]
-        public async Task<IActionResult> Create(HotelCommand hotelCommand)
+        public async Task<IActionResult> Create(HotelCommand hotelCommand, CancellationToken cancellationToken)
         {
             var validationResult = _validator.Validate(hotelCommand);
             if (!validationResult.IsValid)
@@ -103,7 +98,7 @@ namespace Hotels.Controllers
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var hotel = await _hotelService.Add(_mapper.Map<Hotel>(hotelCommand), hotelCommand.Longitude, hotelCommand.Latitude);
+            var hotel = await _hotelService.Add(_mapper.Map<Hotel>(hotelCommand), hotelCommand.Longitude, hotelCommand.Latitude, cancellationToken);
             if (hotel is null)
             {
                 _logger.LogInformation($"Hotel {hotelCommand.Name} is not added.");
@@ -118,9 +113,9 @@ namespace Hotels.Controllers
         //     Update hotel with provided id.
         //
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, HotelCommand hotelCommand)
+        public async Task<IActionResult> Update(int id, HotelCommand hotelCommand, CancellationToken cancellationToken)
         {
-            var entity = await _hotelService.GetById(id);
+            var entity = await _hotelService.GetById(id, cancellationToken);
             if(entity is null)
             {
                 _logger.LogInformation($"Hotel with id {id} doesn't exist.");
@@ -133,7 +128,7 @@ namespace Hotels.Controllers
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var hotel = await _hotelService.Update(_mapper.Map(hotelCommand, entity), hotelCommand.Longitude, hotelCommand.Latitude);
+            var hotel = await _hotelService.Update(_mapper.Map(hotelCommand, entity), hotelCommand.Longitude, hotelCommand.Latitude, cancellationToken);
             if(hotel is null)
             {
                 _logger.LogInformation($"Update failed for hotel with id {id}.");
@@ -148,9 +143,9 @@ namespace Hotels.Controllers
         //     Delete hotel with provided id.
         //
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var isDeleted = await _hotelService.Delete(id);
+            var isDeleted = await _hotelService.Delete(id, cancellationToken);
             if(!isDeleted)
             {
                 _logger.LogInformation($"Deletion failed for hotel with id {id}.");

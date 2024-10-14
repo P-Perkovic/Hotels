@@ -22,7 +22,7 @@ namespace Hotels.Configuration
                 .WithMessage("Max hotel name length is 255.");
 
             RuleFor(h => h.Price)
-                .NotEqual(0m)
+                .Must(h => h > 0m)
                 .WithMessage("Hotel price is required.");
 
             RuleFor(h => h.Longitude)

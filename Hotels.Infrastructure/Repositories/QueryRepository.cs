@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hotels.Infrastructure.Repositories
@@ -25,17 +26,17 @@ namespace Hotels.Infrastructure.Repositories
             DbSet = db.Set<TEntity>();
         }
 
-        public virtual async Task<TEntity> GetById(int id)
+        public virtual async Task<TEntity> GetById(int id, CancellationToken cancellationToken)
         {
-            return await DbSet.FindAsync(id);
+            return await DbSet.FindAsync(id, cancellationToken);
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAll(PageQuery pageQuery)
+        public virtual async Task<IEnumerable<TEntity>> GetAll(PageQuery pageQuery, CancellationToken cancellationToken)
         {
             return await DbSet.AsNoTracking()
                 .OrderBy(e => e.Id)
                 .Page(pageQuery)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hotels.Infrastructure.Repositories
@@ -20,7 +21,7 @@ namespace Hotels.Infrastructure.Repositories
 
 
 
-        public async Task<IEnumerable<Hotel>> SearchByLocation(Point point, LocationQuery locationQuery)
+        public async Task<IEnumerable<Hotel>> SearchByLocation(Point point, LocationQuery locationQuery, CancellationToken cancellationToken)
         {
             var query = DbSet.AsNoTracking()
                 .Where(h => h.Location.Distance(point) < locationQuery.Distance)
@@ -28,7 +29,7 @@ namespace Hotels.Infrastructure.Repositories
                 .ThenBy(h => h.Price)
                 .Page(locationQuery);
 
-            return await query.ToListAsync();
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

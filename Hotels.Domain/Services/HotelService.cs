@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 using System.Linq;
-
+using System.Threading;
 
 namespace Hotels.Domain.Services
 {
@@ -27,39 +27,39 @@ namespace Hotels.Domain.Services
             _commandRepository = commandRepository;
         }
 
-        public async Task<Hotel> GetById(int id)
+        public async Task<Hotel> GetById(int id, CancellationToken cancellationToken)
         {
-            return await _queryRepository.GetById(id);
+            return await _queryRepository.GetById(id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Hotel>> GetAll(PageQuery pageQuery)
+        public async Task<IEnumerable<Hotel>> GetAll(PageQuery pageQuery, CancellationToken cancellationToken)
         {
-            return await _queryRepository.GetAll(pageQuery);
+            return await _queryRepository.GetAll(pageQuery, cancellationToken);
         }
 
-        public async Task<IEnumerable<Hotel>> SearchByLocation(LocationQuery locationQuery)
+        public async Task<IEnumerable<Hotel>> SearchByLocation(LocationQuery locationQuery, CancellationToken cancellationToken)
         {
             var point = GetPointFromCoordinates(locationQuery.Longitude, locationQuery.Latitude);
-            return await _queryRepository.SearchByLocation(point, locationQuery);
+            return await _queryRepository.SearchByLocation(point, locationQuery, cancellationToken);
         }
 
-        public async Task<Hotel> Add(Hotel hotel, double longitude, double latitude)
+        public async Task<Hotel> Add(Hotel hotel, double longitude, double latitude, CancellationToken cancellationToken)
         {
             hotel.Location = GetPointFromCoordinates(longitude, latitude);
 
-            return await _commandRepository.Add(hotel);
+            return await _commandRepository.Add(hotel, cancellationToken);
         }
 
-        public async Task<Hotel> Update(Hotel hotel, double longitude, double latitude)
+        public async Task<Hotel> Update(Hotel hotel, double longitude, double latitude, CancellationToken cancellationToken)
         {
             hotel.Location = GetPointFromCoordinates(longitude, latitude);
 
-            return await _commandRepository.Update(hotel);
+            return await _commandRepository.Update(hotel, cancellationToken);
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> Delete(int id, CancellationToken cancellationToken)
         {
-            return await _commandRepository.Remove(id);
+            return await _commandRepository.Remove(id, cancellationToken);
         }
 
         //
